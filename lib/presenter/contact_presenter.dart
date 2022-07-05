@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wamobile/constant/constant.dart';
 import 'package:wamobile/model/contact.dart';
@@ -26,6 +25,14 @@ class ContactPresenter {
 
   addContact(Contact contact) async {
     var pref = await SharedPreferences.getInstance();
+    List<Contact> contactList = await getContactList();
+    if (contactList.isNotEmpty) {
+     for(final element in contactList) {
+        if (element.phone == contact.phone){
+          return false;
+        }
+      }
+    }
     var contacts = [];
     var contactJson = pref.getString(Constant.CONTACT_LIST);
     if (contactJson != null) {
@@ -33,6 +40,7 @@ class ContactPresenter {
     }
     contacts.add(jsonEncode(contact.toJson()));
     pref.setString(Constant.CONTACT_LIST, jsonEncode(contacts));
+    return true;
   }
 
   editContact(String? oldPhone, String newName, String newPhone) async {
@@ -66,11 +74,5 @@ class ContactPresenter {
     }
   }
 
-  String generatePhone(String phoneInput) {
-    var initialNum = phoneInput[0] + phoneInput[1];
-    if (initialNum != '62'){
-     return "62" + phoneInput.substring(1);
-    }
-    return phoneInput;
-  }
+
 }

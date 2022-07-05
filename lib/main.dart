@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wamobile/home_page.dart';
+import 'package:wamobile/page/contact_list_page.dart';
 
 void main() {
   runApp(MyApp());
@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
         fontFamily: 'Nunito'
       ),
-      home: HomePage(),
+      home: ContactListPage(),
     );
   }
 }

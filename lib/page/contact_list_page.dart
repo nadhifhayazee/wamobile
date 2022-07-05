@@ -1,25 +1,23 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:wamobile/create_contact_page.dart';
-import 'package:wamobile/detail_contact_page.dart';
 import 'package:wamobile/model/contact.dart';
+import 'package:wamobile/page/about_app_page.dart';
+import 'package:wamobile/page/contact_detail_page.dart';
+import 'package:wamobile/page/insert_contact_page.dart';
 import 'package:wamobile/presenter/contact_presenter.dart';
-import 'package:wamobile/util/ColorUtil.dart';
-import 'package:wamobile/util/hex_color.dart';
 
-class HomePage extends StatefulWidget {
+class ContactListPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return _HomePageState();
+    return _ContactListPage();
   }
 }
 
-class _HomePageState extends State<HomePage> {
+class _ContactListPage extends State<ContactListPage> {
   var presenter = ContactPresenter();
   List<Contact> contactList = [];
   var isDataExist = true;
   double height = 0;
+
   @override
   void initState() {
     super.initState();
@@ -31,23 +29,24 @@ class _HomePageState extends State<HomePage> {
     height = MediaQuery.of(context).size.height;
     return Scaffold(
       body: SafeArea(
-          child: SingleChildScrollView(
-        child: Container(
-          padding: EdgeInsets.only(left: 16, top: 30, right: 16, bottom: 80),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              _header(),
-              _searchBar(),
-              isDataExist ? _contactList() : _noDataWidget()
-            ],
+        child: SingleChildScrollView(
+          child: Container(
+            padding: EdgeInsets.only(left: 16, top: 30, right: 16, bottom: 20),
+            child: Column(
+              children: [
+                _aboutAppButton(),
+                _header(),
+                _searchBar(),
+                isDataExist ? _contactList() : _noDataWidget()
+              ],
+            ),
           ),
         ),
-      )),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return CreateContactPage();
+            return InsertContactPage();
           })).then((value) => getContacts());
         },
         child: Icon(Icons.add),
@@ -55,41 +54,37 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Widget _aboutAppButton() {
+    return Container(
+      margin: EdgeInsets.only(left: 16, right: 16, top: 12, bottom: 16),
+      alignment: Alignment.centerRight,
+      child: IconButton(
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) {
+              return AboutAppPage();
+            }));
+          },
+          icon: Icon(
+            Icons.info_outline,
+            color: Colors.black,
+            size: 30,
+          )),
+    );
+  }
+
   Widget _header() {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 30),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            "Selamat Datang di",
-            style: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'Nunito',
-                fontSize: 30),
-          ),
-          Row(
-            children: [
-              Flexible(
-                child: Text("WA.me Mobile",
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 30)),
-              ),
-              Container(
-                alignment: Alignment.topLeft,
-                child: IconButton(
-                    icon: Icon(
-                      Icons.info_outline,
-                      color: ColorUtil.mainColor,
-                    ),
-                    onPressed: null),
-              ),
-            ],
-          )
-        ],
+    return Container(
+      padding: EdgeInsets.all(16),
+      margin: EdgeInsets.only(bottom: 16),
+      alignment: Alignment.center,
+      child: Text(
+        "wa.me Mobile",
+        textAlign: TextAlign.center,
+        style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'Nunito',
+            fontSize: 30),
       ),
     );
   }
@@ -98,8 +93,9 @@ class _HomePageState extends State<HomePage> {
     return Container(
         padding: EdgeInsets.only(left: 16, top: 4, right: 16, bottom: 4),
         decoration: BoxDecoration(
-            border: Border.all(width: 1),
-            borderRadius: BorderRadius.circular(30)),
+            border: Border.all(width: 1, color: Color(0xFFF2F4F6)),
+            color: Color(0xFFF2F4F6),
+            borderRadius: BorderRadius.circular(20)),
         child: Row(
           children: [
             Flexible(
@@ -113,8 +109,7 @@ class _HomePageState extends State<HomePage> {
               onChanged: _doSearch,
               maxLines: 1,
               decoration: InputDecoration(
-                  hintText: "Cari nama atau nomor whatsup",
-                  border: InputBorder.none),
+                  hintText: "Cari nama atau nomor", border: InputBorder.none),
             ))
           ],
         ));
@@ -195,7 +190,8 @@ class _HomePageState extends State<HomePage> {
                       child: Image.asset('images/person.png'),
                     ),
                     Container(
-                      padding: EdgeInsets.all(4),
+                      padding:
+                          EdgeInsets.only(left: 4, right: 4, top: 2, bottom: 2),
                       alignment: Alignment.center,
                       child: Text(
                         "${contact.name}",
@@ -209,6 +205,8 @@ class _HomePageState extends State<HomePage> {
                     ),
                     Text(
                       "${contact.phone}",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.grey),
                     ),
                   ],
                 ),
@@ -221,59 +219,68 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _contactItem(Contact contact) {
-    return InkWell(
-      onTap: () {
-        _goToDetailContact(contact);
-      },
-      child: Container(
-        padding: EdgeInsets.only(top: 8, bottom: 8),
-        child: Card(
-          elevation: 4,
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(10))),
-          child: Container(
-            padding: EdgeInsets.all(16),
-            decoration: BoxDecoration(),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
+    return Container(
+      child: InkWell(
+        onTap: () {
+          _goToDetailContact(contact);
+        },
+        child: Container(
+          padding: EdgeInsets.all(12),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Flexible(
+                child: Container(
                   padding: EdgeInsets.only(right: 10),
-                  child: Icon(
-                    Icons.person,
-                    color: ColorUtil.mainColor,
-                    size: 50,
+                  child: Image.asset(
+                    'images/person.png',
+                    width: 50,
+                    height: 50,
                   ),
                 ),
-                Expanded(
-                    child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(top: 4, bottom: 4),
-                      child: Text(
-                        "${contact.name}",
-                        style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.black87,
-                            fontWeight: FontWeight.bold),
+              ),
+              Expanded(
+                  flex: 3,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(top: 2),
+                        child: Text(
+                          "${contact.name}",
+                          style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.black87,
+                              fontWeight: FontWeight.bold),
+                        ),
                       ),
-                    ),
-                    Text("${contact.phone}")
-                  ],
-                )),
-                Container(
+                      Text(
+                        "${contact.phone}",
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 14,
+                        ),
+                      )
+                    ],
+                  )),
+              Flexible(
+                child: Container(
                   padding: EdgeInsets.all(8),
+                  alignment: Alignment.topRight,
                   child: IconButton(
-                    icon: Icon(Icons.delete,
-                      color: Colors.red,),
+                    icon: Icon(
+                      Icons.remove_circle_outline,
+                      color: Colors.red,
+                      size: 20,
+                    ),
                     onPressed: () {
                       deleteContact(contact);
                     },
                   ),
-                )
-              ],
-            ),
+                ),
+              )
+            ],
           ),
         ),
       ),
@@ -310,27 +317,33 @@ class _HomePageState extends State<HomePage> {
 
   _goToDetailContact(Contact contact) {
     Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return DetailContactPage(contact);
+      return ContactDetailPage(contact);
     })).then((value) => getContacts());
   }
 
   Widget _noDataWidget() {
     return Container(
-      alignment: Alignment.center,
-      height: height - 300,
-      margin: EdgeInsets.only(top: 20),
-      padding: EdgeInsets.all(8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Flexible(child: Icon(Icons.do_not_disturb_alt,color: Colors.grey, size: 100,)),
-          Flexible(
-            child: Text("Tidak ada data ditemukan!",
-            textAlign: TextAlign.center,),
-          )
-        ],
-      ),
-    );
+        margin: EdgeInsets.only(top: 20, bottom: 20),
+        alignment: Alignment.center,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Padding(
+              padding: EdgeInsets.only(top: 50, left: 16, bottom: 4, right: 16),
+              child: Icon(
+                Icons.not_interested,
+                size: 100,
+                color: Colors.grey,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(left: 16, right: 16),
+              child: Text(
+                "Tidak ada data ditemukan!",
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ],
+        ));
   }
 }
