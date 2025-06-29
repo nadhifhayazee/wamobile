@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:wamobile/page/edit_contact_page.dart';
 import 'package:wamobile/widget/chat_whatsapp_button.dart';
 
+import '../component/custom_text_area.dart';
 import '../model/contact.dart';
 
 class ContactDetailPage extends StatefulWidget {
@@ -29,15 +30,13 @@ class _ContactDetailPage extends State<ContactDetailPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        iconTheme: IconThemeData(color: Colors.black),
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         title: Text(
           "Detail Kontak",
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold
-          ),
+          style: Theme.of(context).textTheme.headlineSmall,
         ),
+        iconTheme:
+        IconThemeData(color: Theme.of(context).colorScheme.onSurface),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -45,10 +44,10 @@ class _ContactDetailPage extends State<ContactDetailPage> {
             Container(
               alignment: Alignment.center,
               margin: EdgeInsets.only(left: 20, right: 20, top: 30, bottom: 12),
-              child: Image.asset(
-                'images/person.png',
-                width: 120,
-                height: 120,
+              child: Icon(
+                Icons.account_circle_rounded,
+                size: 120,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),
             Container(
@@ -57,7 +56,7 @@ class _ContactDetailPage extends State<ContactDetailPage> {
               child: Text(
                 "${contactData?.name}",
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style: Theme.of(context).textTheme.titleLarge,
               ),
             ),
             Container(
@@ -66,7 +65,7 @@ class _ContactDetailPage extends State<ContactDetailPage> {
               child: Text(
                 "${contactData?.phone}",
                 textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.grey),
+                style: Theme.of(context).textTheme.labelLarge
               ),
             ),
             Container(
@@ -75,15 +74,18 @@ class _ContactDetailPage extends State<ContactDetailPage> {
               child: ElevatedButton(
                 style: ButtonStyle(
                     backgroundColor:
-                        MaterialStateProperty.all(Color(0xFFF3F5F7)),
-                    shadowColor: MaterialStateProperty.all(Colors.white),
-                    shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                        WidgetStateProperty.all(Theme.of(context).colorScheme.secondary),
+                    shape: WidgetStateProperty.all(RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                     ))),
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
                     return EditContactPage(contact: this.contactData);
-                  })).then((newContact) => _updateContactData(newContact));
+                  })).then((newContact) => {
+                    if (newContact != null) {
+                      _updateContactData(newContact)
+                    }
+                  });
                 },
                 child: Padding(
                   padding: EdgeInsets.all(8),
@@ -96,14 +98,14 @@ class _ContactDetailPage extends State<ContactDetailPage> {
                             padding: EdgeInsets.only(right: 4),
                             child: Icon(
                               Icons.edit,
-                              color: Colors.grey,
+                              color: Theme.of(context).colorScheme.onSecondary,
                             )),
                       ),
                       Flexible(
                         child: Text(
                           "Edit Kontak",
                           textAlign: TextAlign.center,
-                          style: TextStyle(color: Colors.grey, fontSize: 12),
+                          style: Theme.of(context).textTheme.labelMedium?.copyWith(color: Theme.of(context).colorScheme.onSecondary, fontWeight: FontWeight.bold),
                         ),
                       )
                     ],
@@ -122,43 +124,15 @@ class _ContactDetailPage extends State<ContactDetailPage> {
   Widget _messageField() {
     return Container(
       margin: EdgeInsets.all(20),
-      child: Column(children: [
-        Container(
-            width: MediaQuery.of(context).size.width,
-            padding: EdgeInsets.all(12),
-            child: Text(
-              "Pesan (Optional)",
-              textAlign: TextAlign.left,
-              style: TextStyle(color: Colors.grey),
-            )),
-        Container(
-          padding: EdgeInsets.only(left: 8, top: 4, right: 8, bottom: 4),
-          height: 150,
-          decoration: BoxDecoration(
-              border: Border.all(width: 1, color: Color(0xFFF2F4F6)),
-              color: Color(0xFFF2F4F6),
-              borderRadius: BorderRadius.circular(20)),
-          child: TextField(
-            keyboardType: TextInputType.multiline,
-            textInputAction: TextInputAction.newline,
-            minLines: null,
-            maxLines: null,
-            expands: true,
-            textAlignVertical: TextAlignVertical.top,
-            decoration: InputDecoration(
-              hintText: "Halo kakak",
-              contentPadding: EdgeInsets.all(12),
-              border: InputBorder.none,
-              isDense: true,
-            ),
-            onChanged: (String value) {
-              setState(() {
-                _messageValue = value;
-              });
-            },
-          ),
-        ),
-      ]),
+      child: CustomTextArea(
+        label: "Pesan (Opsional)",
+        hintText: "Haloo Kakak...",
+        onChanged: (String value) {
+          setState(() {
+            _messageValue = value;
+          });
+        },
+      ),
     );
   }
 
@@ -169,7 +143,8 @@ class _ContactDetailPage extends State<ContactDetailPage> {
         phoneNumber: this.contactData?.phone ?? "",
         message: this._messageValue,
         style: ButtonStyle(
-            shape: MaterialStateProperty.all(RoundedRectangleBorder(
+          backgroundColor: WidgetStatePropertyAll(Theme.of(context).colorScheme.primary),
+            shape: WidgetStateProperty.all(RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12)))),
         child: Padding(
           padding: EdgeInsets.only(left: 16, top: 16, bottom: 16, right: 16),
@@ -184,6 +159,8 @@ class _ContactDetailPage extends State<ContactDetailPage> {
                     "images/whatsapp.png",
                     width: 20,
                     height: 20,
+                    color: Theme.of(context).colorScheme.onPrimary,
+
                   ),
                 ),
               ),
@@ -191,10 +168,7 @@ class _ContactDetailPage extends State<ContactDetailPage> {
                 child: Text(
                   "Chat di Whatsapp",
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold),
+                  style: Theme.of(context).textTheme.labelLarge?.copyWith(color: Theme.of(context).colorScheme.onPrimary, fontWeight: FontWeight.bold),
                 ),
               )
             ],

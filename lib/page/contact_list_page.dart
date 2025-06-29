@@ -28,28 +28,40 @@ class _ContactListPage extends State<ContactListPage> {
   Widget build(BuildContext context) {
     height = MediaQuery.of(context).size.height;
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Container(
+        child: Container(
             padding: EdgeInsets.only(left: 16, top: 30, right: 16, bottom: 20),
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _aboutAppButton(),
-                _header(),
+                // _aboutAppButton(),
+                // _header(),
                 _searchBar(),
-                isDataExist ? _contactList() : _noDataWidget()
+                Expanded(
+                    child: isDataExist ? _contactList() : _noDataWidget()
+                )
+
               ],
             ),
           ),
-        ),
       ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Theme.of(context).colorScheme.primary,
         onPressed: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) {
             return InsertContactPage();
           })).then((value) => getContacts());
         },
-        child: Icon(Icons.add),
+        child: Icon(Icons.add, color: Theme.of(context).colorScheme.onPrimary,),
+      ),
+      appBar: AppBar(
+        iconTheme: IconThemeData(color: Theme.of(context).colorScheme.onSurface),
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        title: Text(
+          "Wa.me Mobile",
+          style: Theme.of(context).textTheme.headlineMedium,
+        ),
       ),
     );
   }
@@ -93,8 +105,7 @@ class _ContactListPage extends State<ContactListPage> {
     return Container(
         padding: EdgeInsets.only(left: 16, top: 4, right: 16, bottom: 4),
         decoration: BoxDecoration(
-            border: Border.all(width: 1, color: Color(0xFFF2F4F6)),
-            color: Color(0xFFF2F4F6),
+            color: Theme.of(context).colorScheme.surfaceContainer,
             borderRadius: BorderRadius.circular(20)),
         child: Row(
           children: [
@@ -121,7 +132,6 @@ class _ContactListPage extends State<ContactListPage> {
       child: GridView.builder(
           scrollDirection: Axis.vertical,
           shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
           gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
               maxCrossAxisExtent: 320,
               crossAxisSpacing: 10,
@@ -142,7 +152,7 @@ class _ContactListPage extends State<ContactListPage> {
               return ListView.builder(
                 scrollDirection: Axis.vertical,
                 shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
+                physics: AlwaysScrollableScrollPhysics(),
                 itemBuilder: (BuildContext context, int index) {
                   return _contactItem(contactList[index]);
                 },
@@ -220,6 +230,7 @@ class _ContactListPage extends State<ContactListPage> {
 
   Widget _contactItem(Contact contact) {
     return Container(
+      color: Theme.of(context).colorScheme.surface,
       child: InkWell(
         onTap: () {
           _goToDetailContact(contact);
@@ -233,10 +244,10 @@ class _ContactListPage extends State<ContactListPage> {
               Flexible(
                 child: Container(
                   padding: EdgeInsets.only(right: 10),
-                  child: Image.asset(
-                    'images/person.png',
-                    width: 50,
-                    height: 50,
+                  child: Icon(
+                    Icons.account_circle_rounded,
+                    size: 50,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ),
               ),
@@ -249,18 +260,12 @@ class _ContactListPage extends State<ContactListPage> {
                         padding: EdgeInsets.only(top: 2),
                         child: Text(
                           "${contact.name}",
-                          style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.black87,
-                              fontWeight: FontWeight.bold),
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
                         ),
                       ),
                       Text(
                         "${contact.phone}",
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 14,
-                        ),
+                        style: Theme.of(context).textTheme.labelMedium
                       )
                     ],
                   )),
@@ -270,9 +275,9 @@ class _ContactListPage extends State<ContactListPage> {
                   alignment: Alignment.topRight,
                   child: IconButton(
                     icon: Icon(
-                      Icons.remove_circle_outline,
-                      color: Colors.red,
-                      size: 20,
+                      Icons.delete_forever,
+                      size: 25,
+                      color: Theme.of(context).colorScheme.tertiary,
                     ),
                     onPressed: () {
                       deleteContact(contact);
@@ -323,17 +328,16 @@ class _ContactListPage extends State<ContactListPage> {
 
   Widget _noDataWidget() {
     return Container(
-        margin: EdgeInsets.only(top: 20, bottom: 20),
         alignment: Alignment.center,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Padding(
-              padding: EdgeInsets.only(top: 50, left: 16, bottom: 4, right: 16),
+              padding: EdgeInsets.only(left: 16, bottom: 4, right: 16),
               child: Icon(
-                Icons.not_interested,
-                size: 100,
-                color: Colors.grey,
+                Icons.clear_all,
+                size: 120,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),
             Padding(
@@ -341,6 +345,7 @@ class _ContactListPage extends State<ContactListPage> {
               child: Text(
                 "Tidak ada data ditemukan!",
                 textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.labelMedium,
               ),
             ),
           ],

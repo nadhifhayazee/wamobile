@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:wamobile/component/custom_text_area.dart';
+import 'package:wamobile/component/custom_text_field.dart';
 
 import '../model/contact.dart';
 import '../presenter/contact_presenter.dart';
@@ -23,149 +25,58 @@ class _InsertContactPage extends State<InsertContactPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         title: Text(
-          "Buat Kontak",
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          "Tambah Kontak",
+          style: Theme.of(context).textTheme.headlineSmall,
         ),
-        iconTheme: IconThemeData(color: Colors.black),
+        iconTheme:
+            IconThemeData(color: Theme.of(context).colorScheme.onSurface),
       ),
       body: SingleChildScrollView(
         child: Column(
-          children: [_nameField(), _phoneField(), _messageField(), _button()],
+          children: [
+            Padding(
+                padding:
+                    EdgeInsets.only(left: 16, right: 16, bottom: 8, top: 8),
+                child: CustomTextField(
+                  label: "Nama",
+                  hintText: "Fulan",
+                  onChanged: (String value) {
+                    setState(() {
+                      _nameValue = value;
+                    });
+                  },
+                )),
+            Padding(
+              padding: EdgeInsets.only(left: 16, right: 16, bottom: 8, top: 8),
+              child: CustomTextField(
+                label: "Nomor Whatsapp",
+                hintText: "08xxxxxxxx",
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                onChanged: (String value) {
+                  setState(() {
+                    _phoneValue = value;
+                  });
+                },
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(left: 16, right: 16, bottom: 8, top: 8),
+              child: CustomTextArea(
+                label: "Pesan (Opsional)",
+                hintText: "Haloo Kakak...",
+                onChanged: (String value) {
+                  setState(() {
+                    _messageValue = value;
+                  });
+                },
+              ),
+            ),
+            _button()
+          ],
         ),
       ),
-    );
-  }
-
-  Widget _nameField() {
-    return Container(
-      margin: EdgeInsets.only(left: 20, top: 40, right: 20, bottom: 10),
-      child: Column(children: [
-        Container(
-            width: MediaQuery.of(context).size.width,
-            padding: EdgeInsets.all(10),
-            child: Text(
-              "Nama",
-              textAlign: TextAlign.left,
-              style: TextStyle(color: Colors.grey),
-            )),
-        TextFormField(
-          onChanged: (String value){
-            setState(() {
-              _nameValue = value;
-            });
-          },
-          decoration: InputDecoration(
-              fillColor: Color(0xFFF2F4F6),
-              filled: true,
-              hintText: "Fulan",
-              focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide(
-                    style: BorderStyle.none,
-                  )),
-              enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide(
-                    style: BorderStyle.none,
-                  )),
-              border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide(
-                    style: BorderStyle.none,
-                  ))),
-        )
-      ]),
-    );
-  }
-
-  Widget _phoneField() {
-    return Container(
-      margin: EdgeInsets.only(left: 20, top: 10, right: 20, bottom: 10),
-      child: Column(children: [
-        Container(
-            width: MediaQuery.of(context).size.width,
-            padding: EdgeInsets.all(10),
-            child: Text(
-              "Nomor Whatsapp",
-              textAlign: TextAlign.left,
-              style: TextStyle(color: Colors.grey),
-            )),
-
-        TextFormField(
-          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-          maxLength: 15,
-          onChanged: (String value){
-            setState(() {
-              _phoneValue = value;
-            });
-          },
-          decoration: InputDecoration(
-              fillColor: Color(0xFFF2F4F6),
-              filled: true,
-              hintText: "08xxxxxxxx",
-              counterText: "",
-              focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide(
-                    style: BorderStyle.none,
-                  )),
-              enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide(
-                    style: BorderStyle.none,
-                  )),
-              border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide(
-                    style: BorderStyle.none,
-                  ))),
-        )
-      ]),
-    );
-  }
-
-  Widget _messageField() {
-    return Container(
-      margin: EdgeInsets.only(left: 20, top: 10, right: 20, bottom: 10),
-      child: Column(children: [
-        Container(
-            width: MediaQuery.of(context).size.width,
-            padding: EdgeInsets.all(10),
-            child: Text(
-              "Pesan (Optional)",
-              textAlign: TextAlign.left,
-              style: TextStyle(color: Colors.grey),
-            )),
-        Container(
-          padding: EdgeInsets.only(left: 8, top: 4, right: 8, bottom: 4),
-          height: 120,
-          decoration: BoxDecoration(
-              border: Border.all(width: 1, color: Color(0xFFF2F4F6)),
-              color: Color(0xFFF2F4F6),
-              borderRadius: BorderRadius.circular(30)),
-          child: TextFormField(
-            keyboardType: TextInputType.multiline,
-            textInputAction: TextInputAction.newline,
-            minLines: null,
-            maxLines: null,
-            expands: true,
-            textAlignVertical: TextAlignVertical.top,
-            decoration: InputDecoration(
-              hintText: "Halo kakak",
-              contentPadding: EdgeInsets.all(12),
-              border: InputBorder.none,
-              isDense: true,
-            ),
-            onChanged: (String value) {
-              setState(() {
-                _messageValue = value;
-              });
-            },
-          ),
-        ),
-      ]),
     );
   }
 
@@ -174,49 +85,48 @@ class _InsertContactPage extends State<InsertContactPage> {
       margin: EdgeInsets.all(20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [_buttonChatWhatsapp(), _buttonSave()],
+        children: [_buttonChatWhatsapp(), SizedBox(width: 8), _buttonSave()],
       ),
     );
   }
 
   Widget _buttonChatWhatsapp() {
     return Expanded(
-      child: Container(
-        margin: EdgeInsets.only(right: 6, top: 30, bottom: 30),
-        child: ChatWhatsappButton(
-          phoneNumber: _phoneValue,
-          message: this._messageValue,
-          style: ButtonStyle(
-              shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)))),
-          child: Padding(
-            padding: EdgeInsets.only(left: 4, top: 12, bottom: 12, right: 4),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Flexible(
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 6, right: 6),
-                    child: Image.asset(
-                      "images/whatsapp.png",
-                      width: 20,
-                      height: 20,
-                    ),
+      child: ChatWhatsappButton(
+        phoneNumber: _phoneValue,
+        message: this._messageValue,
+        style: ButtonStyle(
+            backgroundColor: WidgetStateProperty.all(
+                Theme.of(context).colorScheme.secondary),
+            shape: WidgetStateProperty.all(RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12)))),
+        child: Padding(
+          padding: EdgeInsets.only(top: 12, bottom: 12,),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Flexible(
+                child: Padding(
+                  padding: EdgeInsets.only(left: 6, right: 6),
+                  child: Image.asset(
+                    "images/whatsapp.png",
+                    width: 20,
+                    height: 20,
+                    color: Theme.of(context).colorScheme.onSecondary,
                   ),
                 ),
-                Flexible(
-                  child: Text(
-                    "Chat Whatsapp",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold),
-                  ),
-                )
-              ],
-            ),
+              ),
+              Flexible(
+                child: Text(
+                  "Chat",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSecondary,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold),
+                ),
+              )
+            ],
           ),
         ),
       ),
@@ -226,14 +136,15 @@ class _InsertContactPage extends State<InsertContactPage> {
   Widget _buttonSave() {
     return Expanded(
       child: Container(
-        margin: EdgeInsets.only(left: 6, top: 30, bottom: 30),
+        margin: EdgeInsets.only(top: 30, bottom: 30),
         child: ElevatedButton(
           onPressed: _saveContact,
           style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(Colors.white),
-              shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  side: BorderSide(color: Colors.blue)))),
+              backgroundColor: WidgetStateProperty.all(
+                  Theme.of(context).colorScheme.primary),
+              shape: WidgetStateProperty.all(RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ))),
           child: Padding(
             padding: EdgeInsets.only(left: 4, top: 12, bottom: 12, right: 4),
             child: Row(
@@ -246,7 +157,7 @@ class _InsertContactPage extends State<InsertContactPage> {
                     child: Icon(
                       Icons.save,
                       size: 20,
-                      color: Colors.blue,
+                      color: Theme.of(context).colorScheme.onPrimary,
                     ),
                   ),
                 ),
@@ -255,7 +166,7 @@ class _InsertContactPage extends State<InsertContactPage> {
                     "Simpan",
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                        color: Colors.blue,
+                        color: Theme.of(context).colorScheme.onPrimary,
                         fontSize: 16,
                         fontWeight: FontWeight.bold),
                   ),
@@ -275,6 +186,7 @@ class _InsertContactPage extends State<InsertContactPage> {
       if (addContact) {
         ScaffoldMessenger.of(context)
             .showSnackBar(_successSnackBar("Kontak berhasil ditambahkan"));
+        Navigator.pop(context);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(_errorSnackBar(
             "Kontak gagal disimpan. Nomor whatsapp sudah pernah disimpan"));

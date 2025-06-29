@@ -17,7 +17,6 @@ class ContactPresenter {
   List<Contact> _getListContactObject(List<dynamic> list) {
     var contactList = <Contact>[];
     list.forEach((element) {
-      print(jsonDecode(jsonEncode(element)));
       contactList.add(Contact.fromJson(jsonDecode(element)));
     });
     return contactList;

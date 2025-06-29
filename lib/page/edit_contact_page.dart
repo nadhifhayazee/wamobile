@@ -1,12 +1,11 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../component/custom_text_field.dart';
 import '../model/contact.dart';
 import '../presenter/contact_presenter.dart';
 
-class EditContactPage extends StatefulWidget{
-
+class EditContactPage extends StatefulWidget {
   final Contact? contact;
 
   const EditContactPage({required this.contact});
@@ -15,13 +14,11 @@ class EditContactPage extends StatefulWidget{
   State<StatefulWidget> createState() {
     return _EditContactPage();
   }
-
 }
 
-class _EditContactPage extends State<EditContactPage>{
-
-  String _nameValue =  "";
-  String _phoneValue =  "";
+class _EditContactPage extends State<EditContactPage> {
+  String _nameValue = "";
+  String _phoneValue = "";
 
   var presenter = ContactPresenter();
 
@@ -36,26 +33,52 @@ class _EditContactPage extends State<EditContactPage>{
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        iconTheme: IconThemeData(color: Colors.black),
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         title: Text(
           "Edit Kontak",
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold
-          ),
+          style: Theme.of(context).textTheme.headlineSmall,
         ),
+        iconTheme:
+            IconThemeData(color: Theme.of(context).colorScheme.onSurface),
       ),
-      body: WillPopScope(
-        onWillPop: () async {
-          Navigator.pop(context, this.widget.contact);
-          return false;
+      body: PopScope(
+        canPop: false,
+        onPopInvoked: (didPop) {
+          if (!didPop) {
+            Navigator.pop(context, widget.contact);
+          }
         },
         child: SingleChildScrollView(
           child: Column(
             children: [
-              _nameField(),
-              _phoneField(),
+              Padding(
+                  padding:
+                      EdgeInsets.only(left: 16, right: 16, bottom: 8, top: 8),
+                  child: CustomTextField(
+                    initialValue: _nameValue,
+                    label: "Nama",
+                    hintText: "Fulan",
+                    onChanged: (String value) {
+                      setState(() {
+                        _nameValue = value;
+                      });
+                    },
+                  )),
+              Padding(
+                padding:
+                    EdgeInsets.only(left: 16, right: 16, bottom: 8, top: 8),
+                child: CustomTextField(
+                  label: "Nomor Whatsapp",
+                  hintText: "08xxxxxxxx",
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  initialValue: _phoneValue,
+                  onChanged: (String value) {
+                    setState(() {
+                      _phoneValue = value;
+                    });
+                  },
+                ),
+              ),
               _buttonSave()
             ],
           ),
@@ -66,7 +89,7 @@ class _EditContactPage extends State<EditContactPage>{
 
   Widget _nameField() {
     return Container(
-      margin: EdgeInsets.only(left:20, top: 40, right: 20, bottom: 10),
+      margin: EdgeInsets.only(left: 20, top: 40, right: 20, bottom: 10),
       child: Column(children: [
         Container(
             width: MediaQuery.of(context).size.width,
@@ -78,7 +101,7 @@ class _EditContactPage extends State<EditContactPage>{
             )),
         TextFormField(
           initialValue: _nameValue,
-          onChanged: (String value){
+          onChanged: (String value) {
             setState(() {
               _nameValue = value;
             });
@@ -109,7 +132,7 @@ class _EditContactPage extends State<EditContactPage>{
 
   Widget _phoneField() {
     return Container(
-      margin: EdgeInsets.only(left:20, top: 10, right: 20, bottom: 10),
+      margin: EdgeInsets.only(left: 20, top: 10, right: 20, bottom: 10),
       child: Column(children: [
         Container(
             width: MediaQuery.of(context).size.width,
@@ -122,8 +145,7 @@ class _EditContactPage extends State<EditContactPage>{
         TextFormField(
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           maxLength: 15,
-          initialValue: _phoneValue,
-          onChanged: (String value){
+          onChanged: (String value) {
             setState(() {
               _phoneValue = value;
             });
@@ -155,11 +177,12 @@ class _EditContactPage extends State<EditContactPage>{
 
   Widget _buttonSave() {
     return Container(
-      margin: EdgeInsets.only(left: 20,right: 20, top: 30, bottom: 30),
+      margin: EdgeInsets.only(left: 20, right: 20, top: 30, bottom: 30),
       child: ElevatedButton(
         onPressed: _saveContact,
         style: ButtonStyle(
-            shape: MaterialStateProperty.all(RoundedRectangleBorder(
+          backgroundColor: WidgetStatePropertyAll(Theme.of(context).colorScheme.primary),
+            shape: WidgetStateProperty.all(RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12)))),
         child: Padding(
           padding: EdgeInsets.only(left: 16, top: 16, bottom: 16, right: 16),
@@ -170,17 +193,18 @@ class _EditContactPage extends State<EditContactPage>{
               Flexible(
                 child: Padding(
                   padding: EdgeInsets.only(left: 6, right: 6),
-                  child: Icon(Icons.save, size: 20,),
+                  child: Icon(
+                    Icons.save,
+                    size: 20,
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
                 ),
               ),
               Flexible(
                 child: Text(
                   "Simpan Perubahan",
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold),
+                  style: Theme.of(context).textTheme.labelLarge?.copyWith(color: Theme.of(context).colorScheme.onPrimary, fontWeight: FontWeight.bold),
                 ),
               )
             ],
@@ -194,24 +218,20 @@ class _EditContactPage extends State<EditContactPage>{
     if (_nameValue.isNotEmpty && _phoneValue.isNotEmpty) {
       await presenter.editContact(
           widget.contact?.phone, _nameValue, _phoneValue);
-      ScaffoldMessenger.of(context).showSnackBar(_successSnackBar("Kontak berhasil disimpan."));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(_successSnackBar("Kontak berhasil disimpan."));
       Navigator.pop(context, Contact(name: _nameValue, phone: _phoneValue));
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(_errorSnackBar("Nama dan nomor whatsapp harus diisi!"));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(_errorSnackBar("Nama dan nomor whatsapp harus diisi!"));
     }
   }
 
   SnackBar _successSnackBar(String message) {
-    return SnackBar(
-        content: Text(message)
-    );
+    return SnackBar(content: Text(message));
   }
 
   SnackBar _errorSnackBar(String message) {
-    return SnackBar(
-        backgroundColor: Colors.red,
-        content: Text(message)
-    );
+    return SnackBar(backgroundColor: Colors.red, content: Text(message));
   }
-
 }
