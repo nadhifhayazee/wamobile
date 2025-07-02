@@ -32,8 +32,15 @@ dependencies:
   cupertino_icons: ^1.0.8
 
 dev_dependencies:
+  flutter_launcher_icons: ^0.13.1
+
   flutter_test:
     sdk: flutter
+
+flutter_launcher_icons:
+  android: true
+  ios: false # ubah ke true jika mau sekalian ganti icon iOS
+  image_path: "images/app_icon.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
